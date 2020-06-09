@@ -1,11 +1,11 @@
-async function getQuizes(url){
+async function getQuizzes(url) {
    const response = await fetch(url);
 
-   if (response.ok) { 
-   
-      let quizes = await response.json();
-      console.log(quizes);
-      return quizes;
+   if (response.ok) {
+
+      let quizzes = await response.json();
+      console.log(quizzes);
+      return quizzes;
    } else {
       alert("Ошибка HTTP: " + response.status);
    }
@@ -13,62 +13,61 @@ async function getQuizes(url){
 
 
 
-async function createQuizes(){
-   const quizes= await getQuizes('http://localhost:5002/get-quizes');
+async function createQuizzes() {
+   const quizzesFromServer = await getQuizzes('http://localhost:5002/api/get-quizzes');
 
-   const quizElement=document.querySelector('.quiz');
+   const quizzesElement = document.querySelector('.quizzes');
 
-   const quizesElement=document.querySelector('.quizes');
+   const quizElement = document.querySelector('.quiz');
 
-   const variantElement=document.querySelector('.quiz .variant');
-   const variantElementCopy=variantElement.cloneNode(true);
+   const variantElement = document.querySelector('.quiz .variant');
+   const variantElementCopy = variantElement.cloneNode(true);
    variantElement.remove();
 
-   const variantLabelElement=document.querySelector('.quiz .variant-label');
-   const varianLabelElementCopy=variantLabelElement.cloneNode(true);
+   const variantLabelElement = document.querySelector('.quiz .variant-label');
+   const variantLabelElementCopy = variantLabelElement.cloneNode(true);
    variantLabelElement.remove();
 
 
-   let quizCounter=0;
-   
-   for(const quiz of quizes){
-      const quizElementCopy=quizElement.cloneNode(true);
-      
-      const quizImage=quizElementCopy.querySelector('.image');
-      quizImage.src=quiz.image;
-   
-      const quizQuestion=quizElementCopy.querySelector('.question');
-      quizQuestion.textContent=quiz.question;
+   let quizCounter = 0;
+
+   for (const quiz of quizzesFromServer) {
+      const quizElementCopy = quizElement.cloneNode(true);
+
+      const quizImage = quizElementCopy.querySelector('.image');
+      quizImage.src = quiz.image;
+
+      const quizQuestion = quizElementCopy.querySelector('.question');
+      quizQuestion.textContent = quiz.question;
+
+      const variantsElement = quizElementCopy.querySelector('.variants');
 
 
+      for (const variant of quiz.variants) {
+         const quizVariantCopy = variantElementCopy.cloneNode(true);
+         const quizVariantLabelCopy = variantLabelElementCopy.cloneNode(true);
 
-      for(const variant of quiz.variants){
-         const quizVariantCopy=variantElementCopy.cloneNode(true);
-         const quizVariantLabelCopy=varianLabelElementCopy.cloneNode(true);
-
-         console.log(quizVariantCopy);
          quizVariantCopy.setAttribute('name', quizCounter);
-        
-         quizVariantLabelCopy.textContent=variant;
 
-         quizElementCopy.appendChild(quizVariantCopy);
-         quizElementCopy.appendChild(quizVariantLabelCopy);
-         console.log(quizVariantCopy);
+         quizVariantLabelCopy.appendChild(quizVariantCopy);
+         const variantText = document.createElement('span');
+         variantText.textContent = ' ' + variant;
+         quizVariantLabelCopy.appendChild(variantText);
+
+         variantsElement.appendChild(quizVariantLabelCopy);
 
       }
-      
 
-      
+      quizElementCopy.querySelector('.quiz-text').appendChild(variantsElement);
 
-
-      quizesElement.appendChild(quizElementCopy);
+      quizzesElement.appendChild(quizElementCopy);
 
       quizCounter++;
    }
-   
+
 
    quizElement.remove();
 
 }
 
-createQuizes();
+createQuizzes();
