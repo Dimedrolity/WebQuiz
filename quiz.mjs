@@ -1,8 +1,8 @@
 export default class Quiz {
-   constructor(question, variants, answer, image) {
-     this.question = question;
-     this.variants = variants;
-     this.answer = answer;
-     this.image = image;
-   }
- }
+    constructor(question, variants, rightVariantIndex, image) {
+        this.question = question;
+        this.variants = variants;
+        this.rightVariantIndex = rightVariantIndex;
+        this.image = image;
+    }
+}
