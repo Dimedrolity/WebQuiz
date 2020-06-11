@@ -1,0 +1,19 @@
+<form id="quizzes-form" class="quizzes d-flex justify-content-between flex-row flex-wrap mt-4 mb-5">
+    {{#each quizzes}}
+        <div class="quiz  pl-3 pr-3 pb-3 mb-3 border rounded">
+            <img class="image" src="{{image}}" alt="">
+
+            <div class="quiz-text pt-3 pl-3">
+                <h5 class="question font-weight-bold mb-3">{{question}}</h5>
+
+                <div class="variants d-flex flex-column">
+                    {{#each variants}}
+                        <label class="variant-label">
+                            <input class="variant" name="{{@../index}}"  value="{{@index}}" type="radio"> {{this}}
+                        </label>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    {{/each}}
+</form>

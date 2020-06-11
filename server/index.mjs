@@ -1,6 +1,7 @@
 import express from "express";
 import * as path from "path";
 import formidableMiddleware from "express-formidable";
+import hbs from "express-handlebars";
 import Quiz from "./quiz.mjs"
 
 const app = express();
@@ -14,8 +15,25 @@ app.listen(port, function () {
 
 app.use('/static', express.static('static'));
 
+// Выбираем в качестве движка шаблонов Handlebars
+app.set("view engine", "hbs");
+// Настраиваем пути и дефолтный view
+app.engine(
+    "hbs",
+    hbs({
+        extname: "hbs",
+        defaultView: "default",
+        layoutsDir: path.join(rootDir, "/views/layouts/")
+    })
+);
+
+app.use(formidableMiddleware());
+
 app.get('/', function (req, res) {
-    res.sendFile(path.join(rootDir, "static/index.html"));
+    res.render("quizzes", {
+        layout: "default",
+        quizzes: allQuizzes
+    });
 });
 
 const allQuizzes = [
@@ -40,12 +58,6 @@ const allQuizzes = [
         '/static/img/fast.png'),
 ];
 
-app.get('/api/get-quizzes', function (req, res) {
-    res.send(JSON.stringify(allQuizzes));
-});
-
-app.use(formidableMiddleware());
-
 app.post('/api/send-form', function (req, res) {
 
     const userAnswers = Object.entries(req.fields);
@@ -53,9 +65,9 @@ app.post('/api/send-form', function (req, res) {
 
     for (const [key, value] of userAnswers) {
         const quizIndex = parseInt(key);
-        const selectedVariantIndex = parseInt(value);
-
         const rightVariantIndex = allQuizzes[quizIndex].rightVariantIndex;
+
+        const selectedVariantIndex = parseInt(value);
 
         if (selectedVariantIndex === rightVariantIndex)
             rightVariantsCount++;
